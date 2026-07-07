@@ -324,6 +324,10 @@
   }
 
   function onDocumentClick(event) {
+    if (event.target.closest && event.target.closest("#learnetrm-course-gate")) {
+      return;
+    }
+
     const lessonLink = event.target.closest && event.target.closest('a[href^="#/lessons/"]');
     if (lessonLink) {
       const lessonId = lessonIdFromHash(lessonLink.getAttribute("href"));
