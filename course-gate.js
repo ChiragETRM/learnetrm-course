@@ -3,7 +3,8 @@
     apiBase: "https://simulator.learnetrm.com/api",
     courseId: "introduction-to-energy-trading-and-risk-management",
     registerUrl: "https://learnetrm.com/register-now",
-    gateAfterIndex: 3,
+    gateAfterTitle: "physical vs. financial trading",
+    fallbackGateAfterIndex: 3,
   };
 
   const storage = {
@@ -89,6 +90,12 @@
   function currentLessonIndex() {
     const id = lessonIdFromHash();
     return id ? lessonIndexFromId(id) : -1;
+  }
+
+  function gateAfterIndex() {
+    const target = CONFIG.gateAfterTitle.toLowerCase();
+    const index = lessons.findIndex((lesson) => lesson.title.toLowerCase().includes(target));
+    return index >= 0 ? index : CONFIG.fallbackGateAfterIndex;
   }
 
   function completedIdsThrough(indexExclusive) {
@@ -239,7 +246,8 @@
   function openGate(targetLessonId) {
     if (isGateOpen) return;
     isGateOpen = true;
-    pendingLessonId = targetLessonId || (lessons[CONFIG.gateAfterIndex + 1] && lessons[CONFIG.gateAfterIndex + 1].id);
+    const gateIndex = gateAfterIndex();
+    pendingLessonId = targetLessonId || (lessons[gateIndex + 1] && lessons[gateIndex + 1].id);
     injectStyles();
 
     const backdrop = document.createElement("div");
@@ -288,7 +296,7 @@
         if (result.progress && Array.isArray(result.progress.completed_lesson_ids)) {
           writeJson(storage.completed, result.progress.completed_lesson_ids);
         }
-        rememberCompleted(CONFIG.gateAfterIndex + 1);
+        rememberCompleted(gateAfterIndex() + 1);
         closeGate();
         if (pendingLessonId) {
           window.location.hash = `#/lessons/${pendingLessonId}`;
@@ -309,13 +317,13 @@
 
   function shouldBlockLessonId(lessonId) {
     const index = lessonIndexFromId(lessonId);
-    return index > CONFIG.gateAfterIndex && !getToken();
+    return index > gateAfterIndex() && !getToken();
   }
 
   function guardCurrentRoute() {
     const lessonId = lessonIdFromHash();
     if (lessonId && shouldBlockLessonId(lessonId)) {
-      const fallback = lessons[CONFIG.gateAfterIndex];
+      const fallback = lessons[gateAfterIndex()];
       if (fallback) window.location.hash = `#/lessons/${fallback.id}`;
       openGate(lessonId);
       return;
@@ -345,7 +353,7 @@
     if (label === "continue") {
       const index = currentLessonIndex();
       const target = lessons[index + 1];
-      if (index === CONFIG.gateAfterIndex && !getToken()) {
+      if (index === gateAfterIndex() && !getToken()) {
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
