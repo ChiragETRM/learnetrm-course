@@ -64,7 +64,7 @@
   }
 
   function decodeRuntimeData(source) {
-    const match = source.match(/__jsonp\("runtime-data\.js","([^"]+)"\)/);
+    const match = source.match(/__jsonp\("runtime-data\.js(?:\?[^\"]+)?","([^\"]+)"\)/);
     if (!match) return null;
     const binary = atob(match[1]);
     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
