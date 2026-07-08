@@ -5,6 +5,9 @@
     registerUrl: "https://learnetrm.com/register-now",
     gateAfterTitle: "physical vs. financial trading",
     fallbackGateAfterIndex: 3,
+    legacyLessonRedirects: {
+      "codex-capstone-war-room": "CdxCapstoneWarRoomLesson00000001",
+    },
   };
 
   const storage = {
@@ -81,6 +84,14 @@
   function lessonIdFromHash(hash) {
     const match = String(hash || window.location.hash).match(/^#\/lessons\/([^/?#]+)/);
     return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  function redirectLegacyLessonHash() {
+    const lessonId = lessonIdFromHash();
+    const replacement = lessonId && CONFIG.legacyLessonRedirects[lessonId];
+    if (!replacement) return false;
+    window.location.hash = `#/lessons/${replacement}`;
+    return true;
   }
 
   function lessonIndexFromId(id) {
@@ -321,6 +332,7 @@
   }
 
   function guardCurrentRoute() {
+    if (redirectLegacyLessonHash()) return;
     const lessonId = lessonIdFromHash();
     if (lessonId && shouldBlockLessonId(lessonId)) {
       const fallback = lessons[gateAfterIndex()];
