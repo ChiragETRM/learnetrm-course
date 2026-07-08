@@ -72,7 +72,7 @@
   }
 
   async function loadLessons() {
-    const response = await fetch("runtime-data.js", { cache: "no-store" });
+    const response = await fetch("runtime-data.js?v=20260708-open-nav", { cache: "no-store" });
     const data = decodeRuntimeData(await response.text());
     lessons = (data && data.course && Array.isArray(data.course.lessons) ? data.course.lessons : [])
       .map((lesson, index) => ({
