@@ -6,7 +6,8 @@
     gateAfterTitle: "physical vs. financial trading",
     fallbackGateAfterIndex: 3,
     legacyLessonRedirects: {
-      "codex-capstone-war-room": "CdxCapstoneWarRoomLesson00000001",
+      "codex-capstone-war-room": "ddgOSmrH2LyLCKK_ORAbpHiEADkQgrbP",
+      "CdxCapstoneWarRoomLesson00000001": "ddgOSmrH2LyLCKK_ORAbpHiEADkQgrbP",
     },
   };
 
